@@ -1,320 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Verification Key</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg-black: #0a0505;
-    --bg-black-2: #120808;
-    --red-primary: #ff1a3c;
-    --red-glow: #ff2d4d;
-    --red-dim: #7a0f1e;
-    --green-success: #2ecc71;
-    --text-light: #f5f0f0;
-    --text-muted: #b89a9a;
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  html, body {
-    height: 100%;
-  }
-
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: radial-gradient(circle at 50% 20%, #1a0505 0%, var(--bg-black) 55%, #000000 100%);
-    color: var(--text-light);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  /* Ambient glow blobs */
-  body::before,
-  body::after {
-    content: '';
-    position: fixed;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    filter: blur(140px);
-    opacity: 0.35;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  body::before {
-    background: var(--red-primary);
-    top: -150px;
-    left: -150px;
-  }
-
-  body::after {
-    background: var(--red-dim);
-    bottom: -150px;
-    right: -150px;
-  }
-
-  /* Subtle grid overlay for hacker vibe */
-  .grid-overlay {
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(255, 26, 60, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 26, 60, 0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    z-index: 0;
-    pointer-events: none;
-    mask-image: radial-gradient(circle at center, black 0%, transparent 75%);
-  }
-
-  .card {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 480px;
-    background: linear-gradient(145deg, rgba(30, 10, 12, 0.65), rgba(10, 5, 5, 0.75));
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 45, 77, 0.25);
-    border-radius: 20px;
-    padding: 40px 32px;
-    text-align: center;
-    box-shadow:
-      0 0 0 1px rgba(255, 26, 60, 0.05),
-      0 20px 60px rgba(0, 0, 0, 0.6),
-      0 0 80px rgba(255, 26, 60, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    animation: fadeInUp 0.7s ease both;
-  }
-
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .icon-badge {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle, rgba(255, 26, 60, 0.25), rgba(255, 26, 60, 0.05));
-    border: 1px solid rgba(255, 45, 77, 0.4);
-    box-shadow: 0 0 25px rgba(255, 26, 60, 0.4);
-  }
-
-  .icon-badge svg {
-    width: 28px;
-    height: 28px;
-    stroke: var(--red-glow);
-    filter: drop-shadow(0 0 6px rgba(255, 45, 77, 0.8));
-  }
-
-  h1 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-bottom: 10px;
-    background: linear-gradient(90deg, #ffffff, #ffb3bd);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .subtitle {
-    font-size: 0.92rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-    margin-bottom: 28px;
-    padding: 0 4px;
-  }
-
-  .key-box {
-    background: rgba(0, 0, 0, 0.45);
-    border: 1px solid rgba(255, 26, 60, 0.35);
-    border-radius: 14px;
-    padding: 20px 16px;
-    margin-bottom: 22px;
-    word-break: break-all;
-    position: relative;
-    box-shadow: inset 0 0 20px rgba(255, 26, 60, 0.08);
-  }
-
-  .key-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--red-glow);
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-
-  .key-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--text-light);
-    text-shadow: 0 0 18px rgba(255, 45, 77, 0.5);
-    font-family: 'Poppins', monospace;
-  }
-
-  .key-value.error {
-    color: #ff5c5c;
-    font-size: 1.05rem;
-    font-weight: 500;
-    text-shadow: none;
-  }
-
-  .copy-btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--red-primary), #b3132a);
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.25s ease;
-    box-shadow: 0 8px 24px rgba(255, 26, 60, 0.35);
-  }
-
-  .copy-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(255, 26, 60, 0.5);
-  }
-
-  .copy-btn:active {
-    transform: translateY(0);
-  }
-
-  .copy-btn.copied {
-    background: linear-gradient(135deg, var(--green-success), #1e9e5a);
-    box-shadow: 0 8px 24px rgba(46, 204, 113, 0.4);
-  }
-
-  .copy-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    background: #3a2a2a;
-    box-shadow: none;
-  }
-
-  .footer-note {
-    margin-top: 20px;
-    font-size: 0.72rem;
-    color: rgba(184, 154, 154, 0.6);
-    letter-spacing: 0.5px;
-  }
-
-  @media (max-width: 400px) {
-    .card { padding: 30px 22px; }
-    .key-value { font-size: 1.2rem; }
-    h1 { font-size: 1.4rem; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Key</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0d0d0d;
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff;
+        }
+        .container {
+            background: rgba(20, 20, 20, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(220, 20, 60, 0.4);
+            border: 1px solid #dc143c;
+            max-width: 400px;
+            width: 90%;
+        }
+        h2 { color: #dc143c; margin-bottom: 10px; font-weight: 600; }
+        p { color: #aaaaaa; font-size: 14px; margin-bottom: 30px; }
+        .key-box {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 24px;
+            letter-spacing: 2px;
+            color: #ff4d4d;
+            border: 1px dashed #dc143c;
+            margin-bottom: 25px;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: #dc143c;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+        .copy-btn:hover { background: #ff3333; box-shadow: 0 0 15px rgba(220, 20, 60, 0.6); }
+        .success { background: #28a745 !important; box-shadow: 0 0 15px rgba(40, 167, 69, 0.6) !important; border-color: #28a745 !important; color: white !important;}
+        .error-msg { color: #dc143c; font-size: 18px; font-weight: 600; }
+    </style>
 </head>
 <body>
 
-<div class="grid-overlay"></div>
+    <div class="container" id="content-box">
+        <h2>Your Verification Key</h2>
+        <p>Copy the key below and send it to the Telegram Bot to unlock your video for 1 hour.</p>
+        <div class="key-box" id="key-display">Loading...</div>
+        <button class="copy-btn" id="copy-btn" onclick="copyKey()">Copy Key</button>
+    </div>
 
-<div class="card">
-  <div class="icon-badge">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="11" width="18" height="10" rx="2"></rect>
-      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-    </svg>
-  </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const key = urlParams.get('key');
+        const keyDisplay = document.getElementById('key-display');
+        const copyBtn = document.getElementById('copy-btn');
+        const contentBox = document.getElementById('content-box');
 
-  <h1>Your Verification Key</h1>
-  <p class="subtitle">Please copy the exact key below and send it to the Telegram Bot to unlock your requested video.</p>
+        if (key) {
+            keyDisplay.innerText = key;
+        } else {
+            contentBox.innerHTML = "<div class='error-msg'>Invalid Request.<br>No key generated.</div>";
+        }
 
-  <div class="key-box">
-    <div class="key-label">Verification Key</div>
-    <div class="key-value" id="keyDisplay">Loading...</div>
-  </div>
-
-  <button class="copy-btn" id="copyBtn" onclick="copyKey()">Copy Key</button>
-
-  <p class="footer-note" id="footerNote">Keep this key private. Do not share it publicly.</p>
-</div>
-
-<script>
-  function getKeyFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('key');
-  }
-
-  const keyDisplay = document.getElementById('keyDisplay');
-  const copyBtn = document.getElementById('copyBtn');
-  const footerNote = document.getElementById('footerNote');
-  const extractedKey = getKeyFromURL();
-
-  if (extractedKey && extractedKey.trim() !== '') {
-    keyDisplay.textContent = extractedKey;
-  } else {
-    keyDisplay.textContent = 'Invalid Request. No key generated.';
-    keyDisplay.classList.add('error');
-    copyBtn.disabled = true;
-    copyBtn.textContent = 'No Key Available';
-    footerNote.textContent = 'Please use the link provided by the bot.';
-  }
-
-  function copyKey() {
-    if (!extractedKey) return;
-
-    const finish = () => {
-      const originalText = 'Copy Key';
-      copyBtn.textContent = 'Copied!';
-      copyBtn.classList.add('copied');
-      setTimeout(() => {
-        copyBtn.textContent = originalText;
-        copyBtn.classList.remove('copied');
-      }, 1800);
-    };
-
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(extractedKey).then(finish).catch(() => fallbackCopy(finish));
-    } else {
-      fallbackCopy(finish);
-    }
-  }
-
-  function fallbackCopy(callback) {
-    const textarea = document.createElement('textarea');
-    textarea.value = extractedKey;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-    try {
-      document.execCommand('copy');
-      callback();
-    } catch (err) {
-      alert('Copy failed. Please copy manually: ' + extractedKey);
-    }
-    document.body.removeChild(textarea);
-  }
-</script>
-
+        function copyKey() {
+            if(!key) return;
+            navigator.clipboard.writeText(key).then(() => {
+                copyBtn.innerText = "Copied!";
+                copyBtn.classList.add("success");
+                setTimeout(() => {
+                    copyBtn.innerText = "Copy Key";
+                    copyBtn.classList.remove("success");
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>
