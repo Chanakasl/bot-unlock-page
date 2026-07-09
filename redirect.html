@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Click to Unlock</title>
+    <style>
+        body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; color: white; }
+        button { background: #e50914; color: white; padding: 20px 40px; border: none; font-size: 20px; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <button onclick="unlock()">CLICK TO UNLOCK VIDEO</button>
+    <script>
+        function unlock() {
+            const params = new URLSearchParams(window.location.search);
+            const url = atob(params.get('src'));
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
