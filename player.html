@@ -5,36 +5,140 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIP Secure Player</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #0d0d0d; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        .video-container { position: relative; width: 100%; max-width: 900px; aspect-ratio: 16 / 9; box-shadow: 0 0 25px rgba(220, 20, 60, 0.4); border: 2px solid #dc143c; border-radius: 12px; overflow: hidden; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
-        .error-msg { color: #dc143c; font-family: sans-serif; font-size: 20px; text-align: center; margin-top: 15%; padding: 20px; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: #0d0d0d; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        
+        /* බැනර් Ads සඳහා ඩිසයින් එක */
+        .ad-container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            margin: 10px 0;
+            background-color: #1a1a1a;
+            min-height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #555;
+            font-size: 12px;
+            border: 1px dashed #333;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 0 25px rgba(220, 20, 60, 0.4);
+            border: 2px solid #dc143c;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+        }
+
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* වීඩියෝවට උඩින් වැටෙන නොපෙනෙන කවරය (Click Ad එක සඳහා) */
+        #ad-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10; /* වීඩියෝවට වඩා උඩින් පිහිටයි */
+            cursor: pointer;
+            background: rgba(0,0,0,0); /* සම්පූර්ණයෙන්ම විනිවිද පෙනෙන */
+        }
+
+        .error-msg { 
+            color: #dc143c; 
+            font-family: sans-serif; 
+            font-size: 20px; 
+            text-align: center; 
+            margin-top: 15%; 
+            padding: 20px; 
+            position: relative;
+            z-index: 5;
+        }
         .error-sub { color: #aaaaaa; font-size: 14px; margin-top: 10px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="video-container" id="video-container">
-        <div class="error-msg">Loading Player...</div>
+    <div class="ad-container" id="top-ad">
+        Top Advertisement Space
+    </div>
+
+    <div class="video-wrapper">
+        <div class="video-container" id="video-container">
+            <div id="ad-overlay"></div>
+            <div class="error-msg">Loading Player...</div>
+        </div>
+    </div>
+
+    <div class="ad-container" id="bottom-ad">
+        Bottom Advertisement Space
     </div>
 
     <script>
+        // --- 1. Ad Settings (ඔයාගේ ලින්ක් මෙතනට දාන්න) ---
+        
+        // ඔයාගේ Ad Network එකෙන් (Adsterra / Monetag වගේ) දෙන Direct Link එක මෙතනට දාන්න
+        const directAdLink = "https://www.effectivecpmnetwork.com/uc05skcz3x?key=2a18479b253af98017c20535438d6be6"; 
+
+        // --- 2. Click Ad Overlay Logic ---
+        const adOverlay = document.getElementById('ad-overlay');
+        
+        adOverlay.addEventListener('click', function() {
+            // අලුත් ටැබ් එකකින් Ad එක ඕපන් කිරීම
+            if(directAdLink !== "https://your-ad-network-direct-link.com") {
+                window.open(directAdLink, '_blank');
+            }
+            
+            // Ad එක ඕපන් වුණාට පස්සේ නොපෙනෙන කවරය අයින් කිරීම (එතකොට වීඩියෝ එක ප්ලේ කරන්න පුළුවන්)
+            adOverlay.style.display = 'none';
+            
+            // (Optional) විනාඩි 5කින් ආයෙත් Ad Overlay එක එන්න ඕන නම් මේක තියන්න
+            setTimeout(() => {
+                adOverlay.style.display = 'block';
+            }, 300000); // 300000ms = විනාඩි 5යි
+        });
+
+        // --- 3. Video & Time-Bomb Logic ---
         const urlParams = new URLSearchParams(window.location.search);
-        // දැන් අපි ගන්නේ src නෙවෙයි, 'data' කියන parameter එක
         const encodedData = urlParams.get('data'); 
         const container = document.getElementById('video-container');
 
         if (encodedData) {
             try {
                 const decodedData = atob(encodedData);
-                const parts = decodedData.split(':::'); // ලින්ක් එක සහ වෙලාව වෙන් කිරීම
+                const parts = decodedData.split(':::'); 
 
                 if(parts.length === 2) {
                     const videoSrc = parts[0];
-                    const expireTime = parseInt(parts[1]); // Expire වෙන වෙලාව (තත්පර වලින්)
-                    const currentTime = Math.floor(Date.now() / 1000); // දැනට තියෙන වෙලාව
+                    const expireTime = parseInt(parts[1]); 
+                    const currentTime = Math.floor(Date.now() / 1000); 
 
-                    // වෙලාව පැනලාද කියලා චෙක් කිරීම
                     if (currentTime > expireTime) {
                         container.innerHTML = `
                             <div class="error-msg">
@@ -42,8 +146,19 @@
                                 <div class="error-sub">Links are only valid for 1 hour for security reasons.<br>Please generate a new link from the Telegram Bot.</div>
                             </div>`;
                     } else {
-                        // වෙලාව හරි නම් ප්ලේ කිරීම
-                        container.innerHTML = `<iframe src="${videoSrc}" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
+                        // වීඩියෝව සහ Ad Overlay එක පෙන්වීම
+                        container.innerHTML = `
+                            <div id="ad-overlay" onclick="triggerAd()"></div>
+                            <iframe src="${videoSrc}" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
+                            
+                        // innerHTML වලින් දැම්මට පස්සේ ආයෙත් Event Listener එක ඇඩ් කරන්න ඕන
+                        document.getElementById('ad-overlay').addEventListener('click', function() {
+                            if(directAdLink !== "https://your-ad-network-direct-link.com") {
+                                window.open(directAdLink, '_blank');
+                            }
+                            this.style.display = 'none';
+                            setTimeout(() => { this.style.display = 'block'; }, 300000);
+                        });
                     }
                 } else {
                     container.innerHTML = `<div class="error-msg">Invalid Link Format!</div>`;
